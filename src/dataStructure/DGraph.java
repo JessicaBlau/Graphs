@@ -1,6 +1,7 @@
 package dataStructure;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,7 +48,7 @@ public class DGraph implements graph{
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		return null;
+		return listEdgesSrc.values();
 	}
 
 	@Override
@@ -76,8 +77,7 @@ public class DGraph implements graph{
 
 	@Override
 	public int edgeSize() {
-		int AllEdges = listEdgesSrc.size()+listEdgesDest.size();
-		return AllEdges;
+		return listEdgesSrc.size();
 	}
 
 	@Override
