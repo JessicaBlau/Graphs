@@ -1,18 +1,17 @@
 package dataStructure;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import elements.Edge;
 import elements.Node;
 
 
 public class DGraph implements graph{
+	private static int counterChanges = 0;
+	private static int counterEdges = 0;
 	private HashMap<Integer,node_data> listNodes = new HashMap<Integer, node_data>();
-	private HashMap<Integer,edge_data> listEdgesSrc = new HashMap<Integer, edge_data>();
-	private HashMap<Integer,edge_data> listEdgesDest = new HashMap<Integer, edge_data>();
 	/**
 	 * This constructor returns the node by the key that is received.
 	 * @return the correct node if key is same and null if none match.
@@ -20,25 +19,40 @@ public class DGraph implements graph{
 	@Override
 	public node_data getNode(int key) {
 		if(listNodes.containsKey(key)) {
-			node_data ans = listNodes.get(key);
-			return ans;
+			return listNodes.get(key);
 		}
 		return null;
 	}
 
 	@Override
 	public edge_data getEdge(int src, int dest) {
+		Node temp = (Node) listNodes.get(src);
+		if(listNodes.containsKey(src)&&listNodes.containsKey(dest)
+				&&temp.getAllEdges().containsKey(dest)) {
+			return temp.getAllEdges().get(dest);
+		}
 		return null;
 	}
 
 	@Override
 	public void addNode(node_data n) {
+		counterChanges++;
 		listNodes.putIfAbsent(n.getKey(), n);
 	}
 
 	@Override
 	public void connect(int src, int dest, double w) {
-		
+		if(listNodes.containsKey(src)&&listNodes.containsKey(dest)) {
+			Node tempsrc = (Node) listNodes.get(src);
+			Node tempdest = (Node) listNodes.get(dest);
+			if(!tempsrc.getAllEdges().containsKey(dest)) {
+				Edge temp = new Edge(src,dest,w);
+				tempdest.AddThisEdge(temp);
+				counterChanges++;
+				counterEdges++;
+			}
+		}
+		else System.out.println("This source or destination is invalid");
 	}
 
 	@Override
@@ -48,24 +62,33 @@ public class DGraph implements graph{
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		return listEdgesSrc.values();
+		Collection<edge_data> EdgesOfThisNode = new ArrayList<>();
+		if(listNodes.containsKey(node_id)) {
+			Node temp = (Node) listNodes.get(node_id);
+			EdgesOfThisNode.addAll(temp.getAllEdges().values());
+			return EdgesOfThisNode;
+		}
+		return null;
 	}
 
 	@Override
 	public node_data removeNode(int key) {
 		if(listNodes.containsKey(key)) {
-			listNodes.remove(key);
-			
-			return null;
+			Node temp = (Node) listNodes.get(key);
+			temp.getAllEdges().remove(key);
+			counterChanges++;
+			return listNodes.remove(key);
 		}
 		return null;
 	}
 
 	@Override
 	public edge_data removeEdge(int src, int dest) {
-		if(listEdgesDest.containsKey(dest) && listEdgesSrc.containsKey(src)) {
-			listEdgesDest.remove(dest);
-			return listEdgesSrc.remove(src);
+		Node temp = (Node) listNodes.get(src);
+		if(listNodes.containsKey(dest) && listNodes.containsKey(src)
+				&&temp.getAllEdges().containsKey(dest)) {
+			counterChanges++;
+			return temp.getAllEdges().remove(dest);
 		}
 		return null;
 	}
@@ -77,13 +100,13 @@ public class DGraph implements graph{
 
 	@Override
 	public int edgeSize() {
-		return listEdgesSrc.size();
+		
+		return counterEdges;
 	}
 
 	@Override
 	public int getMC() {
-		// TODO Auto-generated method stub
-		return 0;
+		return counterChanges;
 	}
 
 }

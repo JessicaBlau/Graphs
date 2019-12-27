@@ -1,8 +1,10 @@
 package algorithms;
 
+import java.util.HashMap;
 import java.util.List;
 
-
+import dataStructure.DGraph;
+import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
 /**
@@ -12,10 +14,10 @@ import dataStructure.node_data;
  *
  */
 public class Graph_Algo implements graph_algorithms{
+	private HashMap<node_data,edge_data> Graph = new HashMap<>();
 
 	@Override
 	public void init(graph g) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -57,8 +59,8 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public graph copy() {
-		// TODO Auto-generated method stub
-		return null;
+		DGraph NewGraph = new DGraph();
+		return NewGraph;
 	}
 
 }

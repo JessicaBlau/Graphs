@@ -1,27 +1,38 @@
 package elements;
 
+import java.util.HashMap;
+
 import dataStructure.edge_data;
 
 public class Edge implements edge_data {
-	private Node src;
-	private Node dest;
+	private int src;
+	private int dest;
 	private double weight;
 	private String info;
 	private int tag;
 	
 	public Edge() {
-		this.src = null;
-		this.dest = null;
-		
+		this.src = 0;
+		this.dest = 0;
+		this.weight = 0;
+		this.info = "";
+		this.tag = 0;
+	}
+	public Edge(int src,int dest,double w) {
+		this.dest = dest;
+		this.src = src;
+		this.weight = w;
+		this.tag = 0;
+		this.info = "";
 	}
 	@Override
 	public int getSrc() {
-		return src.getKey();
+		return src;
 	}
 
 	@Override
 	public int getDest() {
-		return dest.getKey();
+		return dest;
 	}
 
 	@Override

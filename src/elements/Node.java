@@ -1,9 +1,17 @@
 package elements;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
+import dataStructure.edge_data;
 import dataStructure.node_data;
 import utils.Point3D;
 
 public class Node implements node_data {
+	private HashMap<Integer,edge_data> listEdges = new HashMap<Integer, edge_data>();
 	private int key;
 	private Point3D location;
 	private double weight;
@@ -17,19 +25,13 @@ public class Node implements node_data {
 		info = "";
 		tag = 0;
 	}
-	public Node(int key) {
-		this.key = key;
-		this.info = "";
-		this.location = null;
-		this.tag = 0;
-		this.weight = 0;
+	
+	public HashMap<Integer, edge_data> getAllEdges(){
+		return listEdges;
 	}
-	public Node(int key, Point3D location, double weight, String info, int tag) {
-		this.key = key;
-		this.location = location;
-		this.weight = weight;
-		this.info = info;
-		this.tag = tag;
+	
+	public void AddThisEdge(edge_data e) {
+		listEdges.putIfAbsent(this.key, e);
 	}
 
 	@Override
