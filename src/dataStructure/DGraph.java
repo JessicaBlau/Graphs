@@ -1,8 +1,13 @@
 package dataStructure;
 
+import java.awt.Window.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import elements.Edge;
 import elements.Node;
@@ -12,6 +17,17 @@ public class DGraph implements graph{
 	private static int counterChanges = 0;
 	private static int counterEdges = 0;
 	private HashMap<Integer,node_data> listNodes = new HashMap<Integer, node_data>();
+	
+	public DGraph() {
+		HashMap<Integer, node_data> graph = new HashMap<Integer, node_data>();
+		listNodes = graph;
+	}
+	public HashMap<Integer, node_data> getGraph(){
+		return listNodes;
+	}
+	public void setGraph(HashMap<Integer, node_data> graph) {
+		listNodes = graph;
+	}
 	/**
 	 * This constructor returns the node by the key that is received.
 	 * @return the correct node if key is same and null if none match.
@@ -27,8 +43,7 @@ public class DGraph implements graph{
 	@Override
 	public edge_data getEdge(int src, int dest) {
 		Node temp = (Node) listNodes.get(src);
-		if(listNodes.containsKey(src)&&listNodes.containsKey(dest)
-				&&temp.getAllEdges().containsKey(dest)) {
+		if(listNodes.containsKey(src)&&listNodes.containsKey(dest)) {
 			return temp.getAllEdges().get(dest);
 		}
 		return null;
@@ -36,18 +51,22 @@ public class DGraph implements graph{
 
 	@Override
 	public void addNode(node_data n) {
-		counterChanges++;
-		listNodes.putIfAbsent(n.getKey(), n);
+		if(!listNodes.containsValue(n)) {
+			listNodes.putIfAbsent(n.getKey(), n);
+			counterChanges++;
+		}
+		else {
+			System.out.println("Node is in this graph already.");
+		}
 	}
 
 	@Override
 	public void connect(int src, int dest, double w) {
 		if(listNodes.containsKey(src)&&listNodes.containsKey(dest)) {
 			Node tempsrc = (Node) listNodes.get(src);
-			Node tempdest = (Node) listNodes.get(dest);
 			if(!tempsrc.getAllEdges().containsKey(dest)) {
 				Edge temp = new Edge(src,dest,w);
-				tempdest.AddThisEdge(temp);
+				tempsrc.AddThisEdge(temp);
 				counterChanges++;
 				counterEdges++;
 			}
@@ -100,7 +119,6 @@ public class DGraph implements graph{
 
 	@Override
 	public int edgeSize() {
-		
 		return counterEdges;
 	}
 

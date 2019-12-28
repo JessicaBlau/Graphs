@@ -1,5 +1,6 @@
 package algorithms;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import dataStructure.DGraph;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
+import utils.FileUtils;
 /**
  * This empty class represents the set of graph-theory algorithms
  * which should be implemented as part of Ex2 - Do edit this class.
@@ -14,7 +16,8 @@ import dataStructure.node_data;
  *
  */
 public class Graph_Algo implements graph_algorithms{
-	private HashMap<node_data,edge_data> Graph = new HashMap<>();
+	private HashMap<Integer,node_data> GraphNodes = new HashMap<>();
+	private HashMap<Integer,edge_data> GraphEdges = new HashMap<>();
 
 	@Override
 	public void init(graph g) {
@@ -29,8 +32,11 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public void save(String file_name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			FileUtils.writeFile(file_name, toString());
+		} catch (IOException e) {
+			throw new RuntimeException("File invalid");
+		}
 	}
 
 	@Override

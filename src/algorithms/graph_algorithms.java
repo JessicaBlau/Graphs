@@ -2,6 +2,7 @@ package algorithms;
 /**
  * This interface represents the "regular" Graph Theory algorithms including:
 
+
  * 0. clone();
  * 1. init(String file_name);
  * 2. save(String file_name);
@@ -13,6 +14,7 @@ package algorithms;
  *
  */
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -39,12 +41,12 @@ public interface graph_algorithms {
 	 * 
 	 * @param file_name
 	 */
-	public void save(String file_name);
-/**
- * Returns true if and only if (iff) there is a valid path from EVREY node to each
- * other node. NOTE: assume directional graph - a valid path (a-->b) does NOT imply a valid path (b-->a).
- * @return
- */
+	public void save(String file_name) throws IOException;
+	/**
+	 * Returns true if and only if (iff) there is a valid path from EVREY node to each
+	 * other node. NOTE: assume directional graph - a valid path (a-->b) does NOT imply a valid path (b-->a).
+	 * @return
+	 */
 	public boolean isConnected();
 	/**
 	 * returns the length of the shortest path between src to dest
