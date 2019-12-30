@@ -1,13 +1,17 @@
 package algorithms;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.google.gson.Gson;
 
 import dataStructure.DGraph;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
+import elements.Node;
 import utils.FileUtils;
 /**
  * This empty class represents the set of graph-theory algorithms
@@ -16,18 +20,23 @@ import utils.FileUtils;
  *
  */
 public class Graph_Algo implements graph_algorithms{
-	private HashMap<Integer,node_data> GraphNodes = new HashMap<>();
-	private HashMap<Integer,edge_data> GraphEdges = new HashMap<>();
+	private DGraph graph;
 
 	@Override
 	public void init(graph g) {
-		
+		this.graph = (DGraph) g;
 	}
 
 	@Override
 	public void init(String file_name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			String s = FileUtils.readFile(file_name);
+			Gson gson = new Gson();
+			graph Graph = gson.fromJson(s, graph.class);
+			graph = (DGraph) Graph;
+		} catch (IOException e) {
+			throw new RuntimeException("Can't read file.");
+		}
 	}
 
 	@Override
@@ -65,8 +74,13 @@ public class Graph_Algo implements graph_algorithms{
 
 	@Override
 	public graph copy() {
-		DGraph NewGraph = new DGraph();
-		return NewGraph;
+		DGraph CopiedGraph = new DGraph();
+		HashMap<Integer, node_data> temp = new HashMap<Integer, node_data>();
+		for (node_data node : graph.getV()) {
+			temp.put(node.getKey(),node);
+			CopiedGraph.setGraph(temp);
+		}
+		return CopiedGraph;
 	}
 
 }

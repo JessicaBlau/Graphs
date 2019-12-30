@@ -1,22 +1,19 @@
 package dataStructure;
 
-import java.awt.Window.Type;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import elements.Edge;
 import elements.Node;
 
 
 public class DGraph implements graph{
-	private static int counterChanges = 0;
-	private static int counterEdges = 0;
-	private HashMap<Integer,node_data> listNodes = new HashMap<Integer, node_data>();
+	public int counterChanges = 0;
+	public int counterEdges = 0;
+	private HashMap<Integer,node_data> listNodes = new HashMap<Integer, node_data>();// nodes and there keys.
 	
 	public DGraph() {
 		HashMap<Integer, node_data> graph = new HashMap<Integer, node_data>();
@@ -27,6 +24,10 @@ public class DGraph implements graph{
 	}
 	public void setGraph(HashMap<Integer, node_data> graph) {
 		listNodes = graph;
+		for(Map.Entry<Integer, node_data> entry : listNodes.entrySet()) {
+		   Node temp = (Node) entry.getValue();
+		   counterEdges += temp.getNumberOfEdges();
+		}
 	}
 	/**
 	 * This constructor returns the node by the key that is received.
@@ -51,8 +52,10 @@ public class DGraph implements graph{
 
 	@Override
 	public void addNode(node_data n) {
+		Node temp = (Node) n;
 		if(!listNodes.containsValue(n)) {
 			listNodes.putIfAbsent(n.getKey(), n);
+			counterEdges += temp.getNumberOfEdges();
 			counterChanges++;
 		}
 		else {
@@ -68,7 +71,6 @@ public class DGraph implements graph{
 				Edge temp = new Edge(src,dest,w);
 				tempsrc.AddThisEdge(temp);
 				counterChanges++;
-				counterEdges++;
 			}
 		}
 		else System.out.println("This source or destination is invalid");
@@ -107,6 +109,7 @@ public class DGraph implements graph{
 		if(listNodes.containsKey(dest) && listNodes.containsKey(src)
 				&&temp.getAllEdges().containsKey(dest)) {
 			counterChanges++;
+			counterEdges--;
 			return temp.getAllEdges().remove(dest);
 		}
 		return null;

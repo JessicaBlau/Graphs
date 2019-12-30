@@ -17,6 +17,13 @@ public class Edge implements edge_data {
 		this.info = "";
 		this.tag = 0;
 	}
+	public Edge(double w) {
+		this.dest = 0;
+		this.src = 0;
+		this.info = "";
+		this.weight = w;
+		this.tag = 0;
+	}
 	public Edge(int src,int dest,double w) {
 		this.dest = dest;
 		this.src = src;

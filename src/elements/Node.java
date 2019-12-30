@@ -9,6 +9,7 @@ import utils.Point3D;
 
 public class Node implements node_data {
 	private HashMap<Integer,edge_data> listEdges = new HashMap<Integer, edge_data>();
+	private int counterEdges = 0;
 	private int key;
 	private Point3D location;
 	private double weight;
@@ -29,6 +30,7 @@ public class Node implements node_data {
 		this.weight = weight;
 		this.tag = tag;
 	}
+	
 	public Node(int key) {
 		this.key = key;
 		this.info = "";
@@ -37,11 +39,16 @@ public class Node implements node_data {
 		this.tag = 0;
 	}
 	
+	public int getNumberOfEdges() {
+		return counterEdges;
+	}
+	
 	public HashMap<Integer, edge_data> getAllEdges(){
 		return listEdges;
 	}
 	
 	public void AddThisEdge(edge_data e) {
+		counterEdges++;
 		listEdges.putIfAbsent(e.getDest(), e);
 	}
 
