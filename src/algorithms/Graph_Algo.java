@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,8 @@ import dataStructure.DGraph;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
+import elements.Edge;
+import elements.Node;
 import test.Gaph_AlgoTest;
 /**
  * This empty class represents the set of graph-theory algorithms
@@ -83,7 +86,7 @@ public class Graph_Algo implements graph_algorithms{
 	
 	@Override
 	public boolean isConnected() {
-		if(Graph.nodeSize() == 0) return true;
+		if(Graph.nodeSize() <= 1) return true;
 		else {
 			ZeroTags();
 			DFSUtils(FirstNode(), Graph.nodeSize());
@@ -124,7 +127,8 @@ public class Graph_Algo implements graph_algorithms{
 		}
 	}
 	/**
-	 * 
+	 * This function receives the key of the first node and the amount of nodes in 
+	 * the graph and returns its edges.
 	 * @param firstNode - The key of the first node of this graph.
 	 * @param nodeSize - The amount of nodes.
 	 */
@@ -141,20 +145,88 @@ public class Graph_Algo implements graph_algorithms{
 	 */
 	@Override
 	public double shortestPathDist(int src, int dest) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(src == dest) {
+			return 0;
+		}
+		Node source = (Node) Graph.getNode(src);
+		source.setWeight(0);
+		dijkstra(src, dest);
+		if(Graph.getNode(dest).getWeight() != Double.MAX_VALUE) {
+			return Graph.getNode(dest).getWeight();
+		}
+		else {
+			System.out.println("There is no path between these 2 nodes");
+			return -1;
+		}
+	}
+	void dijkstra(int src, int dest) {
+		ZeroTags();
+		MaxWeight();
+		Node runner = (Node)Graph.getNode(src);
+		String str = "";
+		int source = FirstNode();
+		int nodesSize = Graph.nodeSize();
+		if(src == source) {
+			nodesSize--;
+		}
+		if(runner.getTag() == 1 || nodesSize < 0) {
+			return;
+		}
+		Collection<edge_data> edges = Graph.getE(src);
+		Iterator<edge_data> iter = edges.iterator();
+		while(iter.hasNext()) {
+			Edge run = (Edge) iter.next();
+			double newW=runner.getWeight()+run.getWeight();
+			double oldW=Graph.getNode(run.getDest()).getWeight();
+			if(newW < oldW) {
+				Graph.getNode(run.getDest()).setWeight(newW);
+				Graph.getNode(run.getDest()).setInfo(str+"-"+src);
+				dijkstra(run.getDest(), dest);
+				runner.setTag(1);
+			}
+		}
+		
+	}
+	/**
+	 * This function goes through all of the nodes in this graph and enters infinity
+	 * to the weight of this node.
+	 */
+	private void MaxWeight() {
+		Collection<node_data> nodes = Graph.getV();
+		Iterator<node_data> iter = nodes.iterator();
+		while(iter.hasNext()) {
+			iter.next().setWeight(Double.MAX_VALUE);
+		}
 	}
 	/**
 	 * 
 	 */
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-		List<node_data> ans = new ArrayList<node_data>(); 
+		ArrayList<node_data> ans = new ArrayList<>(); 
 		if(src == dest) {
 			ans.add(Graph.getNode(src));
 			return ans;
 		}
-		return null;
+		Node source = (Node) Graph.getNode(src);
+		source.setWeight(0);
+		dijkstra(src, dest);
+		if(Graph.getNode(dest).getWeight() == shortestPathDist(src,dest)) {
+			String strAns = Graph.getNode(dest).getInfo();
+			strAns = strAns.substring(1);
+			String[] strArray = strAns.split("-");
+			for (int i = 0; i < strArray.length; i++) {
+				int temp=Integer.parseInt(strArray[i]);
+				node_data tmp = Graph.getNode(temp);
+				ans.add(tmp);
+			}
+			ans.add(Graph.getNode(dest));
+			return ans;
+		}
+		else {
+			System.out.println("There is no path between these nodes");
+			return null;
+		}
 	}
 	/**
 	 * 

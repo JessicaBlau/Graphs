@@ -8,7 +8,7 @@ import dataStructure.node_data;
 import utils.Point3D;
 
 public class Node implements node_data {
-	private HashMap<Integer,edge_data> listEdges = new HashMap<Integer, edge_data>();
+	private HashMap<Integer,edge_data> listEdges = new HashMap<Integer, edge_data>();// hashmap that contains the edges of this node with the key of their destination.
 	private int counterEdges = 0;
 	private int key;
 	private Point3D location;
