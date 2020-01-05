@@ -10,15 +10,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 
 import dataStructure.DGraph;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
-import elements.Edge;
 import elements.Node;
-import test.Gaph_AlgoTest;
 /**
  * This empty class represents the set of graph-theory algorithms
  * which should be implemented as part of Ex2 - Do edit this class.
@@ -26,22 +26,25 @@ import test.Gaph_AlgoTest;
  *
  */
 public class Graph_Algo implements graph_algorithms{
-	public DGraph Graph;
+	public graph g;
 	/**
 	 * 
 	 */
 	public Graph_Algo() {
-		Graph = new DGraph();
+		g = new DGraph();
+	}
+	public Graph_Algo(graph _graph) {
+		g = _graph;
 	}
 	/**
 	 * 
 	 */
 	@Override
 	public void init(graph g) {
-		Graph = (DGraph) g;
+		this.g = g;
 	}
 	/**
-	 * 
+	 * Function that receives file.
 	 */
 	@Override
 	public void init(String file_name) {
@@ -50,7 +53,7 @@ public class Graph_Algo implements graph_algorithms{
 			FileInputStream file = new FileInputStream(file_name); 
 			ObjectInputStream in = new ObjectInputStream(file); 
 
-			Graph = (DGraph)in.readObject(); 
+			g = (DGraph)in.readObject(); 
 
 			in.close(); 
 			file.close(); 
@@ -62,7 +65,7 @@ public class Graph_Algo implements graph_algorithms{
 		} 
 	}
 	/**
-	 * 
+	 * Function that saves file.
 	 */
 	@Override
 	public void save(String file_name) {
@@ -71,7 +74,7 @@ public class Graph_Algo implements graph_algorithms{
 			FileOutputStream file = new FileOutputStream(file_name); 
 			ObjectOutputStream out = new ObjectOutputStream(file); 
 
-			out.writeObject(Graph); 
+			out.writeObject(g); 
 
 			out.close(); 
 			file.close(); 
@@ -86,58 +89,43 @@ public class Graph_Algo implements graph_algorithms{
 	
 	@Override
 	public boolean isConnected() {
-		if(Graph.nodeSize() <= 1) return true;
-		else {
-			ZeroTags();
-			DFSUtils(FirstNode(), Graph.nodeSize());
-			for(node_data node: Graph.getV()) {
-				if(node.getTag()!=1)
-					return false;
-			}
-			ZeroTags();
-			Graph.Transpose();
-			ZeroTags();
-			DFSUtils(FirstNode(), Graph.nodeSize());
-			for(node_data node: Graph.getV()) {
-				if(node.getTag()!=1)
-					return false;
-			}
-			ZeroTags();
-			Graph.Transpose();
+		if(g.nodeSize() <= 1) {
 			return true;
 		}
-	}
-	/**
-	 * Function that returns the key of the first node of this graph.
-	 * @return - The key of the first node of this graph or 0 if none.
-	 */
-	private int FirstNode() {
-		for (Iterator<node_data> iterator = Graph.getV().iterator(); iterator.hasNext();) {
-			return iterator.next().getKey();
+		Queue<Node> qu = new ArrayBlockingQueue<Node>(g.nodeSize());
+		ZeroTags();;
+		for (node_data nodes : g.getV() ) {
+			Node node = (Node) nodes;
+			if (node.getAllEdges().values() == null) {
+				return false;
+			}
+			qu.add(node);
+			node.setTag(1);
+			while (!qu.isEmpty()) {
+				for (edge_data edge : qu.peek().getAllEdges().values()) {
+					Node dest = (Node) g.getNode(edge.getDest());
+					if(dest.getTag() == 0) {
+						dest.setTag(1);
+						qu.add(dest);
+					}
+				}
+				qu.remove();
+			} 
+			for (node_data nodes1 : g.getV()) {
+				if (nodes1.getTag() == 0) {
+					return false;
+				}
+				else nodes1.setTag(0);
+			}
 		}
-		return 0;
-
+		return true;
 	}
 	/**
 	 * Function that resets all of the tags in the nodes of this graph.
 	 */
 	private void ZeroTags() {
-		for (Iterator<node_data> iterator = Graph.getV().iterator(); iterator.hasNext();) {
-			iterator.next().setTag(0);
-		}
-	}
-	/**
-	 * This function receives the key of the first node and the amount of nodes in 
-	 * the graph and returns its edges.
-	 * @param firstNode - The key of the first node of this graph.
-	 * @param nodeSize - The amount of nodes.
-	 */
-	private void DFSUtils(int firstNode, int nodeSize) {
-		if(Graph.getNode(firstNode) == null || nodeSize == 0) {
-			return;
-		}
-		for (edge_data edge : Graph.getE(firstNode)) {
-			DFSUtils(edge.getDest(), nodeSize--);
+		for (node_data nodes : g.getV()) {
+			nodes.setTag(0);
 		}
 	}
 	/**
@@ -148,51 +136,45 @@ public class Graph_Algo implements graph_algorithms{
 		if(src == dest) {
 			return 0;
 		}
-		Node source = (Node) Graph.getNode(src);
-		source.setWeight(0);
-		dijkstra(src, dest);
-		if(Graph.getNode(dest).getWeight() != Double.MAX_VALUE) {
-			return Graph.getNode(dest).getWeight();
+		ZeroTags();
+		MaxWeight();
+		String str = "";
+		g.getNode(src).setWeight(0);
+		dijkstra(src, dest, str);
+		if(g.getNode(dest).getWeight() != Double.MAX_VALUE) {
+			return g.getNode(dest).getWeight();
 		}
 		else {
-			System.out.println("There is no path between these 2 nodes");
 			return -1;
 		}
 	}
-	void dijkstra(int src, int dest) {
-		ZeroTags();
-		MaxWeight();
-		Node runner = (Node)Graph.getNode(src);
-		String str = "";
-		int source = FirstNode();
-		int nodesSize = Graph.nodeSize();
-		if(src == source) {
-			nodesSize--;
-		}
-		if(runner.getTag() == 1 || nodesSize < 0) {
+	/**
+	 * 
+	 * @param src
+	 * @param dest
+	 * @param info
+	 */
+	private void dijkstra(int src, int dest, String info) {
+		if(g.getNode(src).getTag() == 1 && g.getNode(src) == g.getNode(dest)) {
 			return;
 		}
-		Collection<edge_data> edges = Graph.getE(src);
-		Iterator<edge_data> iter = edges.iterator();
-		while(iter.hasNext()) {
-			Edge run = (Edge) iter.next();
-			double newW=runner.getWeight()+run.getWeight();
-			double oldW=Graph.getNode(run.getDest()).getWeight();
+		for (edge_data edge : g.getE(src)) {
+			double oldW = g.getNode(edge.getDest()).getWeight();
+			double newW = edge.getWeight() + g.getNode(edge.getSrc()).getWeight();
 			if(newW < oldW) {
-				Graph.getNode(run.getDest()).setWeight(newW);
-				Graph.getNode(run.getDest()).setInfo(str+"-"+src);
-				dijkstra(run.getDest(), dest);
-				runner.setTag(1);
-			}
+				g.getNode(edge.getDest()).setWeight(newW);
+				g.getNode(edge.getDest()).setInfo(info + "-" + src);
+				g.getNode(edge.getSrc()).setTag(1);
+				dijkstra(edge.getDest(), dest, info + "-" + src);
+			}	
 		}
-		
 	}
 	/**
 	 * This function goes through all of the nodes in this graph and enters infinity
 	 * to the weight of this node.
 	 */
 	private void MaxWeight() {
-		Collection<node_data> nodes = Graph.getV();
+		Collection<node_data> nodes = g.getV();
 		Iterator<node_data> iter = nodes.iterator();
 		while(iter.hasNext()) {
 			iter.next().setWeight(Double.MAX_VALUE);
@@ -203,28 +185,27 @@ public class Graph_Algo implements graph_algorithms{
 	 */
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-		ArrayList<node_data> ans = new ArrayList<>(); 
-		if(src == dest) {
-			ans.add(Graph.getNode(src));
-			return ans;
-		}
-		Node source = (Node) Graph.getNode(src);
+		String str = "";
+		int key;
+		ZeroTags();
+		MaxWeight();
+		Node source = (Node)g.getNode(src);
 		source.setWeight(0);
-		dijkstra(src, dest);
-		if(Graph.getNode(dest).getWeight() == shortestPathDist(src,dest)) {
-			String strAns = Graph.getNode(dest).getInfo();
-			strAns = strAns.substring(1);
-			String[] strArray = strAns.split("-");
+		ArrayList<node_data> list = new ArrayList<>();
+		dijkstra(src, dest, str);
+		if(g.getNode(dest).getWeight() == shortestPathDist(src,dest)) {
+			String ans = g.getNode(dest).getInfo();
+			ans = ans.substring(1);
+			String[] strArray = ans.split("-");
 			for (int i = 0; i < strArray.length; i++) {
-				int temp=Integer.parseInt(strArray[i]);
-				node_data tmp = Graph.getNode(temp);
-				ans.add(tmp);
+				key = Integer.parseInt(strArray[i]);
+				node_data tmp=g.getNode(key);
+				list.add(tmp);
 			}
-			ans.add(Graph.getNode(dest));
-			return ans;
+			list.add(g.getNode(dest));
+			return list;
 		}
 		else {
-			System.out.println("There is no path between these nodes");
 			return null;
 		}
 	}
@@ -233,16 +214,74 @@ public class Graph_Algo implements graph_algorithms{
 	 */
 	@Override
 	public List<node_data> TSP(List<Integer> targets) {
-		if (!isConnected()) return null;
-		if (targets.size() == 0 || targets == null) return null;
-		if (targets.size() == 1)
-			return shortestPath(targets.get(0), targets.get(0));
-
-		List<node_data> ans = new ArrayList<>();
-		for (int i = 0; i < targets.size() - 1; i++) {
-			ans.addAll(shortestPath(targets.get(i), targets.get(i + 1)));
+		if((!targets.isEmpty()) && (targets.size() <= g.nodeSize()) && (checkGraph(targets))) {
+			List<node_data> list = new ArrayList<>();
+			if(targets.size() == 1) {
+				list.add(g.getNode(targets.get(0)));
+				return list;
+			}
+			if(shortestPath(targets.get(0),targets.get(1)) != null){
+					list.addAll((shortestPath(targets.get(0), targets.get(1))));
+			}
+			else {
+				return null;				
+			}
+			if(targets.size() == 2)
+				return list;
+			List<node_data> tmp = new ArrayList<>();
+			for (int i = 1; i < targets.size()-1; i++) {
+				int j = i+1;
+				if(shortestPath(targets.get(i), targets.get(j)) != null) {
+					tmp.addAll(shortestPath(targets.get(i), targets.get(j)));
+				}
+				else {
+					return null;						
+				}
+				if((tmp != null) && checkAnswer(targets, tmp) && tmp.containsAll(list)) {
+					return tmp;
+				}
+				else if(tmp != null && checkAnswer(targets, list) && list.containsAll(tmp)) {
+					return list;
+				}
+				else if((tmp != null)){
+					tmp.remove(0);
+					list.addAll(tmp);
+					tmp.clear();
+					if(checkAnswer(targets, list))
+						return list;
+				}
+			}
 		}
-		return ans;
+		return null;
+	}
+	private boolean checkGraph(List<Integer> targets) {
+		for(int a = 0; a < targets.size(); a++) {
+			for(int b = 0; b < targets.size(); b++) {
+				if(a != b && targets.get(a) == targets.get(b))
+					return false;
+			}
+		}
+		int counter = 0;
+		for(int i : targets) {
+			for(node_data node : g.getV()) {
+				if(i == node.getKey())
+					counter++;
+			}
+		}
+		return (counter == targets.size());
+	}
+
+	private boolean checkAnswer(List<Integer> targets,List<node_data> array) {
+		int counter = 0;
+		for(Integer i : targets) {
+			for(node_data node : array) {
+				if(i == node.getKey()) {
+					counter++;
+					break;
+				}
+			}
+		}
+		return (counter == targets.size());
 	}
 	/**
 	 * 
@@ -251,7 +290,7 @@ public class Graph_Algo implements graph_algorithms{
 	 public graph copy() {
 		 DGraph CopiedGraph = new DGraph();
 		 HashMap<Integer, node_data> temp = new HashMap<Integer, node_data>();
-		 for (node_data node : Graph.getV()) {
+		 for (node_data node : g.getV()) {
 			 temp.put(node.getKey(),node);
 			 CopiedGraph.setGraph(temp);
 		 }

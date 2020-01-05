@@ -1,5 +1,10 @@
 package test;
 
-public class graph_GUITest {
+import org.junit.jupiter.api.Test;
 
+public class graph_GUITest {
+	@Test
+	void testDraw() {
+		
+	}
 }

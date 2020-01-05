@@ -28,6 +28,7 @@ package utils;
  ******************************************************************************/
 
 import java.awt.BasicStroke;
+
 import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -74,6 +75,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+import Graph_GUI.Graph_GUI;
+
 
 /**
  *  The {@code StdDraw} class provides a basic capability for
@@ -479,7 +483,10 @@ import javax.swing.KeyStroke;
  *  @author Kevin Wayne
  */
 public final class StdDraw implements ActionListener, MouseListener, MouseMotionListener, KeyListener {
-
+	public static Graph_GUI gg;
+	public static void setGui(Graph_GUI g) {
+		gg = g;
+	}
 	/**
 	 *  The color black.
 	 */
@@ -617,7 +624,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 	private static StdDraw std = new StdDraw();
 
 	// the frame for drawing to the screen
-	private static JFrame frame;
+	public static JFrame frame;
 
 	// mouse state
 	private static boolean isMousePressed = false;
@@ -1900,7 +1907,6 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 		StdDraw.setPenColor(StdDraw.WHITE);
 		StdDraw.text(0.8, 0.8, "white text");
 	}
-
 }
 
 

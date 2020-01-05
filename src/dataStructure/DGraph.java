@@ -161,56 +161,5 @@ public class DGraph implements graph{
 	public int getMC() {
 		return counterChanges;
 	}
-	/**
-	 * Function that reverses the graph.
-	 */
-	public void Transpose() {
-		noTagEdges();
-		for (node_data node : getV()) {
-			for (edge_data edge : getE(node.getKey())) {
-				if(isTwoWayGraph(edge.getSrc(), edge.getDest())) {
-					Edge src = (Edge) getEdge(edge.getSrc(), edge.getDest());
-					Node temp = (Node) getNode(edge.getDest());
-					Edge dest = (Edge) temp.getAllEdges().get(edge.getSrc());
-					if(src.getTag() == 0 && dest.getTag() == 0) {
-						double _temp = src.getWeight();
-						src.setWeight(dest.getWeight());
-						dest.setWeight(_temp);
-						src.setTag(1);;
-					}
-				}
-				else {
-					if(edge.getTag() == 0) {
-						connect(edge.getDest(),edge.getSrc(),edge.getWeight());
-						edge.setTag(1);
-						removeEdge(edge.getSrc(), edge.getDest());
-					}
-				}
-			}
-		}
-	}
-	/**
-	 * Function that resets all the edges tags of this graph.
-	 */
-	private void noTagEdges() {
-		for (Iterator<node_data> node = getV().iterator(); node.hasNext();) {
-			for (edge_data edge : getE(node.next().getKey())) {
-				edge.setTag(0);
-			}
-		}
-	}
-	/**
-	 * Function that can determine if this graph is a two-way graph or not.
-	 * @param src - The source of this edge.
-	 * @param dest - the destination of this edge.
-	 * @return true or false.
-	 */
-	private boolean isTwoWayGraph(int src, int dest) {
-		Node temp = (Node) getNode(dest);
-		if(temp.getAllEdges().containsKey(src)) {
-			return true;
-		}
-		return false;
-	}
 }
 
