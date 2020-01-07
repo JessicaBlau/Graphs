@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -20,24 +21,29 @@ import dataStructure.graph;
 import dataStructure.node_data;
 import elements.Node;
 /**
- * This empty class represents the set of graph-theory algorithms
- * which should be implemented as part of Ex2 - Do edit this class.
+ * This class is that algorithm class that are implied onto a graph. 
+ * Within this class there are many functions that can help define a graph for example,
+ * to find the shortest path getting from one node to another.
  * @author Jessica Blau
  *
  */
 public class Graph_Algo implements graph_algorithms{
 	public graph g;
 	/**
-	 * 
+	 *Default constructor for this graph.
 	 */
 	public Graph_Algo() {
 		g = new DGraph();
 	}
+	/**
+	 * Constructor that receives a graph and enters it to this graph.
+	 * @param _graph - the graph that is received.
+	 */
 	public Graph_Algo(graph _graph) {
 		g = _graph;
 	}
 	/**
-	 * 
+	 * A function that receives a graph and enters it to this graph.
 	 */
 	@Override
 	public void init(graph g) {
@@ -86,7 +92,10 @@ public class Graph_Algo implements graph_algorithms{
 		} 
 
 	}
-	
+	/**
+	 * A function that return true or false if this graph is connected or not. 
+	 * Checks that you can reach each node in this graph.
+	 */
 	@Override
 	public boolean isConnected() {
 		if(g.nodeSize() <= 1) {
@@ -129,7 +138,9 @@ public class Graph_Algo implements graph_algorithms{
 		}
 	}
 	/**
-	 * 
+	 * Function that receives the key to a source and a destinations and returns the 
+	 * number length of the shortest path between them. 
+	 * @return the weight of this path.
 	 */
 	@Override
 	public double shortestPathDist(int src, int dest) {
@@ -149,10 +160,12 @@ public class Graph_Algo implements graph_algorithms{
 		}
 	}
 	/**
-	 * 
-	 * @param src
-	 * @param dest
-	 * @param info
+	 * This is a known algorithm that uses the nodes and weights of the edges to find the shortest path between 
+	 * two nodes. It finds the edge with the smallest weight each time and adds it to the sum weight so far 
+	 * within each node that it arrives at until it reaches the destination node.
+	 * @param src - the key of the source node.
+	 * @param dest - the key of the destination node.
+	 * @param info - the path of the nodes from src to dest. (1-2-3)
 	 */
 	private void dijkstra(int src, int dest, String info) {
 		if(g.getNode(src).getTag() == 1 && g.getNode(src) == g.getNode(dest)) {
@@ -181,7 +194,9 @@ public class Graph_Algo implements graph_algorithms{
 		}
 	}
 	/**
-	 * 
+	 * Function that receives the key of a source node and destination node and 
+	 * returns the shortest path between them as a list of nodes. This list 
+	 * is actually the path that was taken.
 	 */
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
@@ -199,8 +214,8 @@ public class Graph_Algo implements graph_algorithms{
 			String[] strArray = ans.split("-");
 			for (int i = 0; i < strArray.length; i++) {
 				key = Integer.parseInt(strArray[i]);
-				node_data tmp=g.getNode(key);
-				list.add(tmp);
+				node_data temp = g.getNode(key);
+				list.add(temp);
 			}
 			list.add(g.getNode(dest));
 			return list;
@@ -210,81 +225,24 @@ public class Graph_Algo implements graph_algorithms{
 		}
 	}
 	/**
-	 * 
+	 * Function that will receive the targets and return the shortest paths 
+	 * between these targets.
 	 */
 	@Override
 	public List<node_data> TSP(List<Integer> targets) {
-		if((!targets.isEmpty()) && (targets.size() <= g.nodeSize()) && (checkGraph(targets))) {
-			List<node_data> list = new ArrayList<>();
-			if(targets.size() == 1) {
-				list.add(g.getNode(targets.get(0)));
-				return list;
-			}
-			if(shortestPath(targets.get(0),targets.get(1)) != null){
-					list.addAll((shortestPath(targets.get(0), targets.get(1))));
-			}
-			else {
-				return null;				
-			}
-			if(targets.size() == 2)
-				return list;
-			List<node_data> tmp = new ArrayList<>();
-			for (int i = 1; i < targets.size()-1; i++) {
-				int j = i+1;
-				if(shortestPath(targets.get(i), targets.get(j)) != null) {
-					tmp.addAll(shortestPath(targets.get(i), targets.get(j)));
-				}
-				else {
-					return null;						
-				}
-				if((tmp != null) && checkAnswer(targets, tmp) && tmp.containsAll(list)) {
-					return tmp;
-				}
-				else if(tmp != null && checkAnswer(targets, list) && list.containsAll(tmp)) {
-					return list;
-				}
-				else if((tmp != null)){
-					tmp.remove(0);
-					list.addAll(tmp);
-					tmp.clear();
-					if(checkAnswer(targets, list))
-						return list;
-				}
-			}
-		}
-		return null;
-	}
-	private boolean checkGraph(List<Integer> targets) {
-		for(int a = 0; a < targets.size(); a++) {
-			for(int b = 0; b < targets.size(); b++) {
-				if(a != b && targets.get(a) == targets.get(b))
-					return false;
-			}
-		}
-		int counter = 0;
-		for(int i : targets) {
-			for(node_data node : g.getV()) {
-				if(i == node.getKey())
-					counter++;
-			}
-		}
-		return (counter == targets.size());
-	}
+		if (!isConnected() || targets.size() == 0 || targets == null)
+            return null;
+        if (targets.size() == 1)
+            return shortestPath(targets.get(0), targets.get(0));
 
-	private boolean checkAnswer(List<Integer> targets,List<node_data> array) {
-		int counter = 0;
-		for(Integer i : targets) {
-			for(node_data node : array) {
-				if(i == node.getKey()) {
-					counter++;
-					break;
-				}
-			}
-		}
-		return (counter == targets.size());
+        List<node_data> list = new LinkedList<>();
+        for (int i = 0; i < targets.size() - 1; i++) {
+            list.addAll(shortestPath(targets.get(i), targets.get(i + 1)));
+        }
+        return list;
 	}
 	/**
-	 * 
+	 * This function copies this graph.
 	 */
 	 @Override
 	 public graph copy() {

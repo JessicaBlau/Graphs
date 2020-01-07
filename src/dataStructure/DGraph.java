@@ -17,22 +17,22 @@ public class DGraph implements graph{
 	public int counterEdges = 0;
 	private HashMap<Integer,node_data> listNodes = new HashMap<Integer, node_data>();// nodes and there keys.
 	/**
-	 * 
+	 * Default Constructor of this graph.
 	 */
 	public DGraph() {
 		HashMap<Integer, node_data> graph = new HashMap<Integer, node_data>();
 		listNodes = graph;
 	}
 	/**
-	 * 
-	 * @return
+	 * Function that will return the nodes of this graph.
+	 * @return - Hashmap of the graphs nodes and keys.
 	 */
 	public HashMap<Integer, node_data> getGraph(){
 		return listNodes;
 	}
 	/**
-	 * 
-	 * @param graph
+	 * This will receive a hashmap of a graph and this function will set this graph to be the hashmap.
+	 * @param graph - is the hashmap that is being entered.
 	 */
 	public void setGraph(HashMap<Integer, node_data> graph) {
 		listNodes = graph;
@@ -53,7 +53,8 @@ public class DGraph implements graph{
 		return null;
 	}
 	/**
-	 * 
+	 * This function will get the edge that connects between node 
+	 * src and dest.
 	 */
 	@Override
 	public edge_data getEdge(int src, int dest) {
@@ -64,7 +65,7 @@ public class DGraph implements graph{
 		return null;
 	}
 	/**
-	 * 
+	 * This function will add this node.
 	 */
 	@Override
 	public void addNode(node_data n) {
@@ -79,7 +80,7 @@ public class DGraph implements graph{
 		}
 	}
 	/**
-	 * 
+	 * This function will connect the edge with this weight to the node src and dest.
 	 */
 	@Override
 	public void connect(int src, int dest, double w) {
@@ -94,14 +95,14 @@ public class DGraph implements graph{
 		else System.out.println("This source or destination is invalid");
 	}
 	/**
-	 * 
+	 * This will return the values of this list meaning the node of this graph.
 	 */
 	@Override
 	public Collection<node_data> getV() {
 		return listNodes.values();
 	}
 	/**
-	 * 
+	 * This function will return the edges coming out of this node.
 	 */
 	@Override
 	public Collection<edge_data> getE(int node_id) {
@@ -114,7 +115,7 @@ public class DGraph implements graph{
 		return null;
 	}
 	/**
-	 * 
+	 * This function will remove the node with this key from the graph.
 	 */
 	@Override
 	public node_data removeNode(int key) {
@@ -127,7 +128,8 @@ public class DGraph implements graph{
 		return null;
 	}
 	/**
-	 * 
+	 * This function will remove the edge that is connected between the two nodes 
+	 * src and dest.
 	 */
 	@Override
 	public edge_data removeEdge(int src, int dest) {
@@ -141,21 +143,21 @@ public class DGraph implements graph{
 		return null;
 	}
 	/**
-	 * 
+	 * This function will return the number of nodes in this graph.
 	 */
 	@Override
 	public int nodeSize() {
 		return listNodes.size();
 	}
 	/**
-	 * 
+	 * This function will return the number of edges in this graph.
 	 */
 	@Override
 	public int edgeSize() {
 		return counterEdges;
 	}
 	/**
-	 * 
+	 * This function will return the amount of changes that was done to this graph.
 	 */
 	@Override
 	public int getMC() {
