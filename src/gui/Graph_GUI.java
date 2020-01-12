@@ -1,4 +1,4 @@
-package Graph_GUI;
+package gui;
 
 import dataStructure.edge_data;
 import dataStructure.graph;

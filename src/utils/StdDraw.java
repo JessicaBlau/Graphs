@@ -76,7 +76,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import Graph_GUI.Graph_GUI;
+import gui.Graph_GUI;
 
 
 /**

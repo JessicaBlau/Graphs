@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Graph_GUI.Graph_GUI;
 import algorithms.*;
 import dataStructure.*;
+import gui.Graph_GUI;
 import utils.*;
 
 /**

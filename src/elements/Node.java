@@ -40,6 +40,11 @@ public class Node implements node_data {
 		this.weight = weight;
 		this.tag = tag;
 	}
+	
+	public Node(double x, double y) {
+		Point3D location = new Point3D(x,y);
+		this.location = location;
+	}
 	/**
 	 * 
 	 * @param key
