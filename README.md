@@ -3,7 +3,7 @@
 #### Author:
 Jessica Blau 
 
-This project creats a weighted graph. Within this project there are many different classes that help us make sure this graph is conneted, use algorithms on this graph to find the shortest path between two nodes, and classes that draw this graph.
+This project creates a weighted graph. Within this project there are many different classes that help us make sure this graph is connected, use algorithms on this graph to find the shortest path between two nodes, and classes that draw this graph.
 
 Node - Implemnts the interfacce node_data. This class represents the junctions in these graphs. Meaning the points that the edges come out of and connect to.
 
